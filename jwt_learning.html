@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JWT 学习 — GenerateJWT 逐行解析</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f5f5f5;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+    line-height: 1.9;
+    padding: 40px 20px;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  h1 {
+    font-size: 28px; margin-bottom: 4px; color: #1a1a1a;
+  }
+  .subtitle {
+    color: #888; font-size: 14px; margin-bottom: 32px;
+  }
+  .card {
+    background: #fff; border-radius: 12px; padding: 24px 28px;
+    margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card h2 {
+    font-size: 18px; color: #1a1a1a; margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 2px solid #e8e8e8;
+  }
+  .code-block {
+    background: #1e1e1e; color: #d4d4d4; border-radius: 8px;
+    padding: 16px 20px; font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 13px; line-height: 1.7; overflow-x: auto; margin: 12px 0;
+  }
+  .code-block .comment { color: #6a9955; }
+  .code-block .keyword { color: #569cd6; }
+  .code-block .func { color: #dcdcaa; }
+  .code-block .string { color: #ce9178; }
+  .code-block .type { color: #4ec9b0; }
+  .line-num {
+    display: inline-block; width: 24px; color: #858585;
+    user-select: none; text-align: right; margin-right: 16px;
+  }
+  .line-box {
+    display: flex; align-items: flex-start; border-left: 3px solid transparent;
+    padding: 4px 0; margin: 0 -20px; padding-left: 20px;
+  }
+  .line-box.highlight {
+    background: #2a2d2e; border-left: 3px solid #569cd6;
+  }
+  .explain-card {
+    background: #f0f6ff; border-radius: 8px; padding: 16px 20px;
+    margin: 12px 0; border-left: 4px solid #0057b3;
+  }
+  .explain-card strong { color: #0057b3; }
+  .doc-link {
+    display: inline-block; background: #e8f0fe; color: #0057b3;
+    padding: 2px 10px; border-radius: 4px; font-size: 13px;
+    text-decoration: none; margin-top: 6px;
+  }
+  .doc-link:hover { background: #d0e0fe; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px;
+  }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #eee; }
+  th { background: #fafafa; font-weight: 600; }
+  .tag {
+    display: inline-block; background: #e8f0fe; color: #0057b3;
+    font-size: 12px; padding: 1px 8px; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🔐 JWT 学习笔记</h1>
+<p class="subtitle"><span class="tag">utils/utils.go</span> — GenerateJWT 函数逐行解析</p>
+
+<div class="card">
+<h2>📄 完整代码</h2>
+<div class="code-block"><pre>
+<span class="comment">// GenerateJWT 生成一个 JWT 令牌，包含用户名和过期时间</span>
+<span class="keyword">func</span> <span class="func">GenerateJWT</span>(username <span class="type">string</span>) (<span class="type">string</span>, <span class="type">error</span>) {
+    token <span class="keyword">:=</span> jwt.<span class="func">NewWithClaims</span>(jwt.SigningMethodHS256, jwt.MapClaims{
+        <span class="string">"username"</span>: username,
+        <span class="string">"exp"</span>:      time.Now().<span class="func">Add</span>(time.Hour * <span class="number">72</span>).<span class="func">Unix</span>(),
+    })
+
+    signedToken, err <span class="keyword">:=</span> token.<span class="func">SignedString</span>([]<span class="type">byte</span>(<span class="string">"secret"</span>))
+    <span class="keyword">return</span> <span class="string">"Bearer "</span> + signedToken, err
+}
+</pre></div>
+</div>
+
+<!-- ===== 第 17 行 ===== -->
+<div class="card">
+<h2>📌 第 17 行 — 函数声明</h2>
+<div class="code-block">
+<span class="line-num">17</span> <span class="keyword">func</span> <span class="func">GenerateJWT</span>(username <span class="type">string</span>) (<span class="type">string</span>, <span class="type">error</span>)
+</div>
+<div class="explain-card">
+  <strong>作用：</strong>定义了一个名为 GenerateJWT 的函数，接收一个 username 字符串，返回两个值：生成的 JWT 字符串 和 可能的错误。
+  <br><br>
+  <strong>为什么返回值要两个？</strong>Go 的习惯是"返回结果 + 错误"，如果成功了 err 就是 nil，如果失败了就返回错误信息。
+</div>
+</div>
+
+<!-- ===== 第 18 行 ===== -->
+<div class="card">
+<h2>📌 第 18 行 — 创建 JWT（核心）</h2>
+<div class="code-block">
+<span class="line-num">18</span> token <span class="keyword">:=</span> jwt.<span class="func">NewWithClaims</span>(jwt.SigningMethodHS256, jwt.MapClaims{<span class="string">"username"</span>: username, <span class="string">"exp"</span>: ...})
+</div>
+<div class="explain-card">
+  <strong>这行在做什么？</strong>
+  <p>创建一个新的 JWT 令牌，指定了"签名方式"和"要携带的数据（claims）"。</p>
+  <br>
+  <strong>拆开看三个部分：</strong>
+</div>
+
+<table>
+  <tr><th style="width:180px;">部分</th><th>值</th><th>说明</th></tr>
+  <tr>
+    <td><code>jwt.NewWithClaims()</code></td>
+    <td>构造函数</td>
+    <td>创建一个新的 JWT token 对象。来自 <code>github.com/golang-jwt/jwt</code> 包</td>
+  </tr>
+  <tr>
+    <td><code>jwt.SigningMethodHS256</code></td>
+    <td>签名算法</td>
+    <td>HS256 = HMAC + SHA256，对称加密。同一个密钥既用来签名也用来验证。适合大多数项目</td>
+  </tr>
+  <tr>
+    <td><code>jwt.MapClaims{...}</code></td>
+    <td>载荷（数据）</td>
+    <td>一个 map，里面放你想存在 JWT 里的数据。key 是字符串，value 可以是任意类型</td>
+  </tr>
+</table>
+
+<div class="explain-card">
+  <strong>什么是 claims？</strong>
+  <p>Claims 就是 JWT 里存放的信息，分为三种：</p>
+  <ul>
+    <li><strong>注册 claims</strong> — 标准字段，比如 <code>exp</code>（过期时间）、<code>iss</code>（签发者）、<code>sub</code>（主题）</li>
+    <li><strong>公共 claims</strong> — 自定义字段，比如 <code>username</code>、<code>role</code>、<code>user_id</code></li>
+    <li><strong>私有 claims</strong> — 双方约定的字段</li>
+  </ul>
+  <br>
+  <strong>jwt.MapClaims 是什么？</strong>
+  <p>Golang 里 map[string]interface{} 类型的别名，意思是你可以在里面放任何自定义数据。比如我们放了 "username" 和 "exp"。</p>
+</div>
+
+<p style="margin-top:12px;">
+  <span class="tag">官方文档</span>
+  <a class="doc-link" href="https://pkg.go.dev/github.com/golang-jwt/jwt/v5#NewWithClaims" target="_blank">jwt.NewWithClaims 文档</a>
+  <a class="doc-link" href="https://pkg.go.dev/github.com/golang-jwt/jwt/v5#SigningMethodHMAC" target="_blank">SigningMethodHS256 文档</a>
+  <a class="doc-link" href="https://pkg.go.dev/github.com/golang-jwt/jwt/v5#MapClaims" target="_blank">MapClaims 文档</a>
+</p>
+</div>
+
+<!-- ===== 第 19 行 ===== -->
+<div class="card">
+<h2>📌 第 19 行 — 添加 username 到载荷</h2>
+<div class="code-block">
+<span class="line-num">19</span> <span class="string">"username"</span>: username,
+</div>
+<div class="explain-card">
+  <strong>作用：</strong>把用户名存到 JWT 的 payload 里。
+  <br><br>
+  <strong>为什么要放 username？</strong>服务器收到这个 JWT 时，不需要查数据库就知道是哪个用户。但注意：Payload 只是 base64 编码，不是加密的，所以<strong>不要放密码</strong>。
+  <br><br>
+  <strong>还能放什么？</strong>比如 user_id、role（角色）、email 等，根据需要来。
+</div>
+</div>
+
+<!-- ===== 第 20 行 ===== -->
+<div class="card">
+<h2>📌 第 20 行 — 设置过期时间</h2>
+<div class="code-block">
+<span class="line-num">20</span> <span class="string">"exp"</span>: time.Now().<span class="func">Add</span>(time.Hour * <span class="number">72</span>).<span class="func">Unix</span>()
+</div>
+<div class="explain-card">
+  <strong>作用：</strong>设置这个 JWT 的过期时间，这里是 72 小时（3 天）后过期。
+  <br><br>
+  <strong>拆开看：</strong>
+  <ul>
+    <li><code>time.Now()</code> — 当前时间</li>
+    <li><code>.Add(time.Hour * 72)</code> — 加上 72 小时</li>
+    <li><code>.Unix()</code> — 转成 Unix 时间戳（自 1970-01-01 起的秒数）</li>
+  </ul>
+  <br>
+  <strong>为什么要有过期时间？</strong>防止 JWT 泄露后永远有效。过期后用户需要重新登录。72 小时是示例，实际项目可能设为 15 分钟（短期）到 7 天不等。
+</div>
+
+<p style="margin-top:12px;">
+  <a class="doc-link" href="https://pkg.go.dev/time#Time.Add" target="_blank">time.Add 文档</a>
+  <a class="doc-link" href="https://pkg.go.dev/time#Time.Unix" target="_blank">time.Unix 文档</a>
+</p>
+</div>
+
+<!-- ===== 第 23 行 ===== -->
+<div class="card">
+<h2>📌 第 22 行 — 签名生成最终 Token</h2>
+<div class="code-block">
+<span class="line-num">22</span> signedToken, err <span class="keyword">:=</span> token.<span class="func">SignedString</span>([]<span class="type">byte</span>(<span class="string">"secret"</span>))
+</div>
+<div class="explain-card">
+  <strong>作用：</strong>用密钥对 JWT 进行签名，生成最终的 token 字符串。
+  <br><br>
+  <strong>拆开看：</strong>
+  <ul>
+    <li><code>token.SignedString()</code> — 用密钥对前面创建的 token 进行签名，输出最终的 JWT 字符串</li>
+    <li><code>[]byte("secret")</code> — 把密钥字符串转成字节数组。"secret" 是密钥（这里是写死的，实际项目应该放在配置文件里）</li>
+  </ul>
+  <br>
+  <strong>签名的意义：</strong>密钥只有服务器知道，所以如果有人篡改了 JWT 里的内容，服务器验证签名时会发现对不上，直接拒绝。这就保证了 JWT 的完整性。
+  <br><br>
+  <strong>为什么用 []byte？</strong>SignedString 方法要求传入 []byte 类型，所以需要字符串转一下。
+</div>
+
+<p style="margin-top:12px;">
+  <span class="tag">官方文档</span>
+  <a class="doc-link" href="https://pkg.go.dev/github.com/golang-jwt/jwt/v5#Token.SignedString" target="_blank">SignedString 文档</a>
+</p>
+</div>
+
+<!-- ===== 第 23 行 ===== -->
+<div class="card">
+<h2>📌 第 23 行 — 返回结果</h2>
+<div class="code-block">
+<span class="line-num">23</span> <span class="keyword">return</span> <span class="string">"Bearer "</span> + signedToken, err
+</div>
+<div class="explain-card">
+  <strong>作用：</strong>返回最终的 JWT 字符串和错误信息。
+  <br><br>
+  <strong>为什么加 "Bearer "？</strong>这是 HTTP 协议的标准做法，表示"我是一个 Bearer token"。客户端在请求头里应该这样发：<code>Authorization: Bearer &lt;token&gt;</code>
+  <br><br>
+  <strong>注意：</strong>这里返回的 "Bearer " + signedToken 中间有空格，最终结果类似 "Bearer eyJhbGciOiJI..."
+</div>
+</div>
+
+<!-- ===== 整体流程 ===== -->
+<div class="card">
+<h2>🔄 整体流程总结</h2>
+<div class="explain-card">
+  <strong>GenerateJWT 函数做了什么：</strong>
+  <ol>
+    <li>收到一个 username</li>
+    <li>创建 JWT 的 header（指定用 HS256 算法）和 payload（放入 username 和过期时间）</li>
+    <li>用密钥 "secret" 对整个内容进行签名</li>
+    <li>返回 "Bearer 签名字符串"</li>
+  </ol>
+  <br>
+  <strong>调用的地方大概是这样：</strong>
+  <div class="code-block" style="margin:0;">
+<span class="comment">// 在 auth_controller.go 中，用户登录成功后调用</span>
+tokenString, err := utils.GenerateJWT(user.Username)
+<span class="keyword">if</span> err != <span class="builtin">nil</span> {
+    <span class="comment">// 处理错误</span>
+}
+<span class="comment">// 把 tokenString 返回给前端</span>
+ctx.JSON(http.StatusOK, gin.H{<span class="string">"token"</span>: tokenString})
+</div>
+</div>
+</div>
+
+<!-- ===== 常见问题 ===== -->
+<div class="card">
+<h2>❓ 常见问题</h2>
+
+<div class="topic" style="margin-bottom:16px;">
+  <div class="topic-title">为什么我生成的 JWT 这么长？</div>
+  <div class="topic-body" style="padding-left:12px; border-left:3px solid #e0e0e0;">
+    <p>JWT 由三部分（Header + Payload + Signature）经过 base64 编码后拼接而成，每部分都挺长，所以整体看起来像一长串乱码。这是正常的。</p>
+  </div>
+</div>
+
+<div class="topic" style="margin-bottom:16px;">
+  <div class="topic-title">HS256 和 RS256 有什么区别？</div>
+  <div class="topic-body" style="padding-left:12px; border-left:3px solid #e0e0e0;">
+    <ul>
+      <li><strong>HS256</strong> — 对称加密，同一个密钥既签名也验证。简单，适合单服务</li>
+      <li><strong>RS256</strong> — 非对称加密，私钥签名、公钥验证。适合微服务场景（验证服务不需要知道签名密钥）</li>
+    </ul>
+  </div>
+</div>
+
+<div class="topic" style="margin-bottom:16px;">
+  <div class="topic-title">密钥 "secret" 写死在代码里可以吗？</div>
+  <div class="topic-body" style="padding-left:12px; border-left:3px solid #e0e0e0;">
+    <p>不行。密钥应该放在配置文件（config.yaml）或者环境变量里，不要写死在代码中。否则代码泄露密钥也跟着泄露，任何人都能伪造 JWT。</p>
+  </div>
+</div>
+
+<div class="topic" style="margin-bottom:16px;">
+  <div class="topic-title">JWT 过期了怎么办？</div>
+  <div class="topic-body" style="padding-left:12px; border-left:3px solid #e0e0e0;">
+    <p>客户端收到 401 未授权响应后，引导用户重新登录。也可以实现"刷新令牌"（refresh token）机制，用长期有效的 refresh token 去换取新的短期 access token，这样用户不用频繁登录。</p>
+  </div>
+</div>
+
+</div>
+
+</div>
+</body>
+</html>

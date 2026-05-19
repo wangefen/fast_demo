@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习笔记</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f5f5f5;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+    line-height: 1.8;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card h2 {
+    font-size: 18px;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e8e8e8;
+  }
+  .topic {
+    margin-bottom: 20px;
+  }
+  .topic:last-child {
+    margin-bottom: 0;
+  }
+  .topic-title {
+    font-weight: 600;
+    color: #0057b3;
+    margin-bottom: 4px;
+  }
+  .topic-body {
+    padding-left: 12px;
+    border-left: 3px solid #e0e0e0;
+  }
+  .topic-body p {
+    margin-bottom: 4px;
+  }
+  .topic-body ul {
+    padding-left: 20px;
+  }
+  .code {
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 13px;
+    color: #d63384;
+  }
+  .tag {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #0057b3;
+    font-size: 12px;
+    padding: 1px 8px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+  a {
+    color: #0057b3;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+  }
+  th {
+    background: #fafafa;
+    font-weight: 600;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>📖 学习笔记</h1>
+<p class="subtitle">项目：CurrencyExchangeApp — 持续更新</p>
+
+<div class="card">
+<h2>📂 config 目录</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：config/config.go + config/config.yaml — 配置文件与读取</p>
+
+<div class="topic">
+  <div class="topic-title">config.yaml</div>
+  <div class="topic-body">
+    <p>存放配置数据（应用名、端口、数据库连接信息等）。纯文本 YAML 格式，改完重启程序即可生效，<strong>无需重新编译</strong>。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">config.go</div>
+  <div class="topic-body">
+    <p>用 Go 代码把 <span class="code">config.yaml</span> 的内容加载到内存。这是源码，改完需要重新编译才能生效。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">两者的区别</div>
+  <div class="topic-body">
+    <table>
+      <tr><th>文件</th><th>存什么</th><th>改了之后</th></tr>
+      <tr><td><span class="code">config.yaml</span></td><td>配置值（端口、密码等）</td><td>重启即可</td></tr>
+      <tr><td><span class="code">config.go</span></td><td>读取配置的逻辑代码</td><td>需重新编译</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>⚙️ Go 指令</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：项目根目录 — go.mod 依赖管理</p>
+
+<div class="topic">
+  <div class="topic-title">go mod tidy</div>
+  <div class="topic-body">
+    <p>整理 Go 项目的依赖：自动添加代码中用到的、移除代码里已不用的依赖。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">go get -u gorm.io/gorm</div>
+  <div class="topic-body">
+    <p>下载或更新 GORM 库（Go 的 ORM 框架，用于简化数据库操作），并记录到 <span class="code">go.mod</span>。跑完后建议再执行 <span class="code">go mod tidy</span> 整理依赖。</p>
+  </div>
+</div>
+
+<div class="topic" style="margin-top:16px; background:#f9f9f9; padding:12px; border-radius:8px;">
+  <div class="topic-title">常用的 go 指令速查</div>
+  <div class="topic-body">
+    <table>
+      <tr><th>指令</th><th>作用</th></tr>
+      <tr><td><span class="code">go mod init 模块名</span></td><td>初始化模块，生成 go.mod</td></tr>
+      <tr><td><span class="code">go mod tidy</span></td><td>整理依赖（加少删多）</td></tr>
+      <tr><td><span class="code">go get -u 包路径</span></td><td>下载/更新指定包</td></tr>
+      <tr><td><span class="code">go run 文件.go</span></td><td>直接运行（不生成可执行文件）</td></tr>
+      <tr><td><span class="code">go build</span></td><td>编译成可执行文件</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-body">
+    <p><span class="code">go mod init 模块名</span> — 初始化 Go 模块，生成 <span class="code">go.mod</span> 文件，让项目拥有依赖管理能力。</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🧱 Go 结构体（struct）与全局变量</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：config/config.go — Config 结构体定义</p>
+
+<div class="topic">
+  <div class="topic-title">type Config struct 的作用</div>
+  <div class="topic-body">
+    <p>定义一个数据结构模板，映射 <span class="code">config.yaml</span> 里的配置字段。结构体每个字段对应一个配置项，代码里通过 <span class="code">config.App.Port</span> 这样清晰的方式取值，不用手动解析字符串。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">AppConfig = &amp;Config{} 的作用</div>
+  <div class="topic-body">
+    <p>声明一个全局变量，初始化为空的 Config 实例（<span class="code">&amp;</span> 取地址，所以是指针）。程序启动时从 YAML 加载数据填进去，后续任何地方直接用 <span class="code">AppConfig</span> 就能拿到配置值。</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🧱 Go 结构体小细节</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：config/config.go — 嵌套结构体与 yaml 标签</p>
+
+<div class="topic">
+  <div class="topic-title">结构体嵌套（结构体里套结构体）</div>
+  <div class="topic-body">
+    <p><span class="code">Config</span> 里直接定义 <span class="code">App</span> 和 <span class="code">Database</span> 两个匿名结构体，省去单独定义类型。访问方式不变：<span class="code">config.App.Name</span>。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">yaml 标签匹配规则</div>
+  <div class="topic-body">
+    <p>Go 结构体字段名大写（如 <span class="code">Dsn</span>），YAML 里是小写（<span class="code">dsn</span>），不加标签会匹配不上。解决：在字段后加 <span class="code">yaml:"dsn"</span> 标签。</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🌐 Gin 框架</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：router/router.go — 路由注册</p>
+
+<div class="topic">
+  <div class="topic-title">*gin.Engine 是什么</div>
+  <div class="topic-body">
+    <p>Gin 框架的核心引擎实例，<span class="code">*</span> 表示指针。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">它的作用</div>
+  <div class="topic-body">
+    <p>可以理解成整个 Web 服务的"路由器 + 处理器"总管：</p>
+    <ul>
+      <li><strong>注册路由</strong> — 用户访问 <span class="code">/login</span> 等地址时该执行哪段代码</li>
+      <li><strong>处理请求</strong> — 接收 HTTP 请求，匹配对应的处理函数</li>
+      <li><strong>返回响应</strong> — 把结果返回给客户端</li>
+    </ul>
+    <p>简单说：一切请求都经过 <span class="code">Engine</span> 来分配处理。</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>📦 Viper（Go 配置管理库）</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：config/config.go — viper 读取配置文件</p>
+
+<div class="topic">
+  <div class="topic-body">
+    <ul>
+      <li>支持 YAML / JSON / TOML / <span class="code">.env</span> 等多种格式</li>
+      <li>支持配置文件、环境变量、命令行参数、远程配置中心等多种来源</li>
+      <li>可以监听配置文件变化并自动重新加载</li>
+      <li>代码里通过 <span class="code">viper.GetString("key")</span> 获取配置值</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🔐 JWT（JSON Web Token）</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：controllers/auth_controller.go — 注册/登录接口</p>
+
+<div class="topic">
+  <div class="topic-title">JWT 是什么</div>
+  <div class="topic-body">
+    <p>JWT 是一种<strong>令牌（Token）</strong>格式，用于在客户端和服务器之间安全地传递信息。它本质上是一串加密后的字符串，包含了用户的部分信息。</p>
+    <p>可以理解成：<strong>一张带签名的电子通行证</strong>。服务器发给你，你每次来的时候亮一下，服务器验证签名没问题就放行。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">为什么需要 JWT</div>
+  <div class="topic-body">
+    <p>HTTP 是<strong>无状态</strong>的，意思是服务器处理完一次请求就"忘了"你是谁。那怎么让服务器记住登录状态？</p>
+    <p>传统做法是 Session：用户登录后，服务器存一份 session 记录，返回一个 session_id 给浏览器。但这样服务器要维护大量 session，分布式部署时更麻烦。</p>
+    <p>JWT 的做法是：<strong>用户信息加密后直接发给客户端保存，服务器不存任何登录记录</strong>。客户端每次请求带上 JWT，服务器验证签名通过就知道你是谁。</p>
+    <p>好处：服务器不需要存 session，省内存，分布式部署也方便。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">JWT 的结构</div>
+  <div class="topic-body">
+    <p>一个 JWT 看起来像这样三部分组成，用点隔开：</p>
+    <p style="background:#f0f0f0; padding:8px 12px; border-radius:6px; word-break:break-all; font-family:monospace; font-size:13px;">xxxxx.yyyyy.zzzzz</p>
+    <ul>
+      <li><strong>Header（头部）</strong> — 说明用了什么加密算法（比如 HS256）</li>
+      <li><strong>Payload（载荷）</strong> — 存放实际数据，比如用户 ID、用户名、过期时间等</li>
+      <li><strong>Signature（签名）</strong> — 用服务器的密钥对前面两部分签名，防止数据被篡改</li>
+    </ul>
+    <p>关键点：<strong>Payload 只是 base64 编码，不是加密的</strong>，任何人都能解码看到内容，所以<strong>不要放密码等敏感信息</strong>。真正防篡改的是签名部分。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">JWT 的工作流程</div>
+  <div class="topic-body">
+    <p>以登录为例：</p>
+    <ol>
+      <li>用户输入用户名密码 → 发送给服务器</li>
+      <li>服务器验证用户名密码正确 → 生成一个 JWT（包含用户 ID、过期时间等），返回给客户端</li>
+      <li>客户端收到 JWT 后存起来（通常是 localStorage 或 Cookie）</li>
+      <li>后续每次请求，客户端把 JWT 放在 HTTP Header 里发过来</li>
+      <li>服务器收到请求，验证 JWT 签名有效、没有过期 → 从 JWT 里取出用户 ID，处理请求</li>
+      <li>JWT 过期了 → 用户需要重新登录</li>
+    </ol>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">在项目里怎么用 JWT</div>
+  <div class="topic-body">
+    <p>需要一个 JWT 相关的工具包，通常放在 <span class="code">utils</span> 或独立的 <span class="code">auth</span> 包里，包含三个函数：</p>
+    <ul>
+      <li><strong>生成 Token</strong> — 用户登录成功时调用，传入用户 ID，返回 JWT 字符串</li>
+      <li><strong>解析/验证 Token</strong> — 从请求头里取出 JWT，验证签名和过期时间，取出用户 ID</li>
+      <li><strong>中间件</strong> — 写一个 Gin 中间件，在每个需要登录的接口前自动执行验证，没通过的直接拦截</li>
+    </ul>
+    <p>项目中的注册/登录流程加上 JWT 后就是：</p>
+    <p><strong>注册</strong>：接收用户名密码 → 加密密码 → 存数据库 → <span style="color:#0057b3;">生成 JWT 返回给用户</span></p>
+    <p><strong>登录</strong>：接收用户名密码 → 查数据库 → 比对密码 → <span style="color:#0057b3;">生成 JWT 返回给用户</span></p>
+    <p><strong>访问需要登录的接口</strong>：客户端带上 JWT → <span style="color:#0057b3;">中间件验证 JWT 有效</span> → 处理请求</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🔍 Go 中的 error 类型与 GORM 的 .Error</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：utils/utils.go + controllers/auth_controller.go — HashPassword 返回值、Create().Error</p>
+
+<div class="topic">
+  <div class="topic-title">为什么 Create(&amp;user) 后面要加 .Error</div>
+  <div class="topic-body">
+    <p><span class="code">global.Db.Create(&amp;user)</span> 返回的是 <span class="code">*gorm.DB</span>，不是 <span class="code">error</span>。<span class="code">gorm.DB</span> 结构体里有一个 <span class="code">.Error</span> 字段用来存错误。所以需要加 <span class="code">.Error</span> 才能取出真正的错误。</p>
+    <p>对比两种写法：</p>
+    <table>
+      <tr><th>写法</th><th>返回类型</th><th>效果</th></tr>
+      <tr><td><span class="code">gorm.Open(...)</span></td><td><span class="code">(*gorm.DB, error)</span></td><td>直接拿 err 判断</td></tr>
+      <tr><td><span class="code">global.Db.Create(&amp;user)</span></td><td><span class="code">*gorm.DB</span></td><td>需要加 .Error 才能拿到错误</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">if 中使用 := 声明变量的作用域</div>
+  <div class="topic-body">
+    <p>在 <span class="code">if err := xxx; err != nil { ... }</span> 中，<span class="code">err</span> 的作用域只在 if 块内。if 块结束后 err 就不可见了。</p>
+    <p>如果 if 里出错了但没写 <span class="code">return</span>，函数不会自动结束，会继续往下执行。所以即便 if 后面暂时没代码，也建议写上 <span class="code">return</span> 养成习惯。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">error 是什么</div>
+  <div class="topic-body">
+    <p><span class="code">error</span> 是 Go 内置的<strong>接口类型</strong>，不是空接口，也不是参数类型。它的定义是：</p>
+    <div class="code-block" style="margin:8px 0;">type error interface {
+    Error() string
+}</div>
+    <p>也就是说，任何类型，只要实现了 <span class="code">Error() string</span> 这个方法，就能当 error 用。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">error 和空接口 interface{} 的区别</div>
+  <div class="topic-body">
+    <table>
+      <tr><th></th><th><span class="code">error</span></th><th><span class="code">interface{}</span>（空接口）</th></tr>
+      <tr><td>能放什么</td><td>只有实现 Error() 方法的类型</td><td>任意类型</td></tr>
+      <tr><td>能否放 int</td><td>❌</td><td>✅</td></tr>
+      <tr><td>能否放 string</td><td>❌</td><td>✅</td></tr>
+      <tr><td>能否放 error 对象</td><td>✅</td><td>✅</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">err.Error() 的作用</div>
+  <div class="topic-body">
+    <p><span class="code">err</span> 本身是 error 接口类型，不是字符串。<span class="code">err.Error()</span> 就是调用 error 接口自带的这个方法，把错误信息<strong>转成字符串</strong>让你看到。</p>
+    <p>为什么在 <span class="code">ctx.JSON()</span> 里要用 <span class="code">err.Error()</span> 而不是直接传 <span class="code">err</span>？因为 <span class="code">gin.H</span> 是 <span class="code">map[string]interface{}</span>，直接传 err 进去序列化成 JSON 时可能输出空对象 <span class="code">{}</span> 或 null，而传 <span class="code">err.Error()</span> 是确定的字符串，一定能正确输出为 <span class="code">{"error": "错误信息"}</span>。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">error 能用做变量名吗</div>
+  <div class="topic-body">
+    <p>不能。<span class="code">error</span> 是 Go 的预定义标识符（类似 <span class="code">string</span>、<span class="code">int</span>、<span class="code">nil</span>、<span class="code">true</span>），用作变量名会导致编译错误。</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🛠️ ShouldBindJSON 和 AutoMigrate</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：controllers/auth_controller.go — 注册接口</p>
+
+<div class="topic">
+  <div class="topic-title">ShouldBindJSON</div>
+  <div class="topic-body">
+    <p><span class="code">ctx.ShouldBindJSON(&amp;user)</span> 自动读取 HTTP 请求的 JSON 请求体，按字段名匹配解析到你指定的结构体里。</p>
+    <ul>
+      <li>JSON 比结构体多字段 → 忽略，不报错</li>
+      <li>JSON 比结构体少字段 → 结构体对应字段留零值（string=""，int=0），不报错</li>
+      <li>JSON 字段类型不匹配 → 报错</li>
+    </ul>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">AutoMigrate</div>
+  <div class="topic-body">
+    <p><span class="code">global.Db.AutoMigrate(&amp;user)</span> 自动检查数据库，保证表结构和结构体一致：</p>
+    <ul>
+      <li>表不存在 → 自动创建</li>
+      <li>缺字段 → 自动新增列</li>
+      <li>不会删字段、不会改类型（防止丢数据）</li>
+    </ul>
+    <p><strong>注意：</strong>AutoMigrate 不应该放在每个请求里执行（比如注册接口），应该在项目启动时执行一次就够了。</p>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>🌐 项目常用分层</h2>
+<p class="tag" style="margin-bottom:12px;">涉及模块：全部 — 项目架构说明</p>
+
+<div class="topic">
+  <div class="topic-body">
+    <p>典型的 Web 项目分层结构：</p>
+    <table>
+      <tr><th>层</th><th>作用</th></tr>
+      <tr><td><span class="code">controller</span></td><td>接收 HTTP 请求，调用 service 处理，返回响应</td></tr>
+      <tr><td><span class="code">service</span></td><td>写业务逻辑</td></tr>
+      <tr><td><span class="code">model</span></td><td>定义数据库表结构，对接数据库（CRUD）</td></tr>
+      <tr><td><span class="code">global</span></td><td>存放整个项目共用的全局变量（Db、配置等）</td></tr>
+      <tr><td><span class="code">config</span></td><td>加载配置文件（YAML 等）</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">model 层的作用</div>
+  <div class="topic-body">
+    <p>定义结构体对应数据库表，配合 GORM 自动建表、增删改查。每个结构体 = 一张表。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">gorm.Model</div>
+  <div class="topic-body">
+    <p>GORM 内置的四个基础字段：ID（主键）、CreatedAt、UpdatedAt、DeletedAt（软删除）。直接内嵌到自定义结构体中。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">AutoMigrate 自动建表</div>
+  <div class="topic-body">
+    <p>只定义结构体不会自动建表，需要在启动时调用 <span class="code">global.Db.AutoMigrate(&amp;model.User{})</span>。GORM 会自动创建/补充字段，不会删表或删列。</p>
+  </div>
+</div>
+
+<div class="topic">
+  <div class="topic-title">global 包</div>
+  <div class="topic-body">
+    <p>存放整个项目都能访问的全局变量（如 <span class="code">global.Db</span>），避免每个文件各自维护一个连接。只放真正全局只需要一份的东西。</p>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+app:
+  name: CurrencyExchangeApp
+  port: :3000
+
+# database:
+#   host: localhost
+#   port: :3306
+#   user: root
+#   password: 123456
+#   name: currency_exchange_db
+database:
+  dsn: "root:123456@tcp(127.0.0.1:3306)/fast_demo?charset=utf8mb4&parseTime=True&loc=Local"
+  MaxIdleConns: 11
+  MaxOpenCons: 114
